@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pool League Schedule</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1a202c;
+      color: #fff;
+      padding: 1.5rem 1rem 1.25rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
+    header p { color: #a0aec0; font-size: 0.875rem; margin-top: 0.3rem; }
+
+    /* ── Week navigation ── */
+    .week-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav-btn {
+      background: #1a202c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      width: 2.25rem;
+      height: 2.25rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) { background: #2d3748; }
+    .nav-btn:disabled { background: #cbd5e0; cursor: default; }
+
+    .week-info { text-align: center; min-width: 140px; }
+    .week-info strong { display: block; font-size: 1.05rem; }
+    .week-info small { color: #718096; font-size: 0.78rem; }
+
+    .week-select {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.875rem;
+      background: #f7fafc;
+      cursor: pointer;
+    }
+
+    /* ── "Tonight" badge ── */
+    .tonight-badge {
+      background: #c6f6d5;
+      color: #276749;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 0.15rem 0.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+
+    /* ── Match grid ── */
+    .matches {
+      max-width: 960px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── Match card ── */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .card-header {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 0.5rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .card-body { padding: 0.75rem 1rem; }
+
+    .game-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      gap: 0.5rem;
+    }
+    .game-row + .game-row { border-top: 1px solid #f7fafc; }
+
+    .game-left {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+    .table-pill {
+      background: #edf2f7;
+      color: #4a5568;
+      border-radius: 6px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .team-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .role-tag {
+      font-size: 0.65rem;
+      color: #a0aec0;
+      flex-shrink: 0;
+    }
+    .sk-badge {
+      background: #fefcbf;
+      color: #744210;
+      border-radius: 6px;
+      padding: 0.15rem 0.45rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      letter-spacing: 0.03em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #a0aec0;
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.25rem; }
+      .matches { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+const SCHEDULE = {"venueName": "Legends Billiards", "startDate": null, "intervalDays": 7, "weeks": {"1": [{"home": "8Ball Assassins", "away": "Aaron K's Team", "games": [{"table": 19, "scorekeeper": "8Ball Assassins"}]}, {"home": "Dead Stroke Society", "away": "Team No Cap", "games": [{"table": 20, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Aaron K's Team", "away": "8Ball Assassins", "games": [{"table": 21, "scorekeeper": "Aaron K's Team"}]}, {"home": "Team No Cap", "away": "Dead Stroke Society", "games": [{"table": 22, "scorekeeper": "Team No Cap"}]}, {"home": "Geometrically Challenged", "away": "Strokers - P", "games": [{"table": 23, "scorekeeper": "Geometrically Challenged"}]}, {"home": "It's Not Clocking", "away": "Strokers - J", "games": [{"table": 24, "scorekeeper": "It's Not Clocking"}]}, {"home": "Strokers - P", "away": "Geometrically Challenged", "games": [{"table": 25, "scorekeeper": "Strokers - P"}]}, {"home": "Strokers - J", "away": "It's Not Clocking", "games": [{"table": 26, "scorekeeper": "Strokers - J"}]}, {"home": "Last Call Legends", "away": "Still Salty", "games": [{"table": 27, "scorekeeper": "Last Call Legends"}]}, {"home": "Still Salty", "away": "Last Call Legends", "games": [{"table": 28, "scorekeeper": "Still Salty"}]}, {"home": "Rasson Assassins", "away": "No Luck - Just Legends", "games": [{"table": 29, "scorekeeper": "Rasson Assassins"}]}, {"home": "Jax Tiger Sharks", "away": "Strokers - D", "games": [{"table": 30, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "No Luck - Just Legends", "away": "Rasson Assassins", "games": [{"table": 31, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Strokers - D", "away": "Jax Tiger Sharks", "games": [{"table": 32, "scorekeeper": "Strokers - D"}]}], "2": [{"home": "Aaron K's Team", "away": "No Luck - Just Legends", "games": [{"table": 19, "scorekeeper": "Aaron K's Team"}]}, {"home": "Rasson Assassins", "away": "Last Call Legends", "games": [{"table": 20, "scorekeeper": "Rasson Assassins"}]}, {"home": "No Luck - Just Legends", "away": "Aaron K's Team", "games": [{"table": 21, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Last Call Legends", "away": "Rasson Assassins", "games": [{"table": 22, "scorekeeper": "Last Call Legends"}]}, {"home": "Still Salty", "away": "Jax Tiger Sharks", "games": [{"table": 23, "scorekeeper": "Still Salty"}]}, {"home": "Strokers - D", "away": "It's Not Clocking", "games": [{"table": 24, "scorekeeper": "Strokers - D"}]}, {"home": "Jax Tiger Sharks", "away": "Still Salty", "games": [{"table": 25, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "It's Not Clocking", "away": "Strokers - D", "games": [{"table": 26, "scorekeeper": "It's Not Clocking"}]}, {"home": "Team No Cap", "away": "8Ball Assassins", "games": [{"table": 27, "scorekeeper": "Team No Cap"}]}, {"home": "8Ball Assassins", "away": "Team No Cap", "games": [{"table": 28, "scorekeeper": "8Ball Assassins"}]}, {"home": "Strokers - P", "away": "Dead Stroke Society", "games": [{"table": 29, "scorekeeper": "Strokers - P"}]}, {"home": "Geometrically Challenged", "away": "Strokers - J", "games": [{"table": 30, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Dead Stroke Society", "away": "Strokers - P", "games": [{"table": 31, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Strokers - J", "away": "Geometrically Challenged", "games": [{"table": 32, "scorekeeper": "Strokers - J"}]}], "3": [{"home": "Dead Stroke Society", "away": "Strokers - J", "games": [{"table": 19, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Geometrically Challenged", "away": "Strokers - D", "games": [{"table": 20, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Strokers - J", "away": "Dead Stroke Society", "games": [{"table": 21, "scorekeeper": "Strokers - J"}]}, {"home": "Strokers - D", "away": "Geometrically Challenged", "games": [{"table": 22, "scorekeeper": "Strokers - D"}]}, {"home": "It's Not Clocking", "away": "Still Salty", "games": [{"table": 23, "scorekeeper": "It's Not Clocking"}]}, {"home": "Jax Tiger Sharks", "away": "Rasson Assassins", "games": [{"table": 24, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Still Salty", "away": "It's Not Clocking", "games": [{"table": 25, "scorekeeper": "Still Salty"}]}, {"home": "Rasson Assassins", "away": "Jax Tiger Sharks", "games": [{"table": 26, "scorekeeper": "Rasson Assassins"}]}, {"home": "8ball Assassins", "away": "Strokers - P", "games": [{"table": 27, "scorekeeper": "8ball Assassins"}]}, {"home": "No Luck - Just Legends", "away": "Last Call Legends", "games": [{"table": 28, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Strokers - P", "away": "8ball Assassins", "games": [{"table": 29, "scorekeeper": "Strokers - P"}]}, {"home": "Last Call Legends", "away": "No Luck - Just Legends", "games": [{"table": 30, "scorekeeper": "Last Call Legends"}]}, {"home": "Aaron K's Team", "away": "Team No Cap", "games": [{"table": 31, "scorekeeper": "Aaron K's Team"}]}, {"home": "Team No Cap", "away": "Aaron K's Team", "games": [{"table": 32, "scorekeeper": "Team No Cap"}]}], "4": [{"home": "Rasson Assassins", "away": "It's Not Clocking", "games": [{"table": 19, "scorekeeper": "Rasson Assassins"}]}, {"home": "Strokers - J", "away": "8Ball Assassins", "games": [{"table": 20, "scorekeeper": "Strokers - J"}]}, {"home": "It's Not Clocking", "away": "Rasson Assassins", "games": [{"table": 21, "scorekeeper": "It's Not Clocking"}]}, {"home": "8Ball Assassins", "away": "Strokers - J", "games": [{"table": 22, "scorekeeper": "8Ball Assassins"}]}, {"home": "Strokers - D", "away": "Dead Stroke Society", "games": [{"table": 23, "scorekeeper": "Strokers - D"}]}, {"home": "Dead Stroke Society", "away": "Strokers - D", "games": [{"table": 24, "scorekeeper": "Dead Stroke Society"}]}, {"home": "No Luck - Just Legends", "away": "Jax Tiger Sharks", "games": [{"table": 25, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Strokers - P", "away": "Team No Cap", "games": [{"table": 26, "scorekeeper": "Strokers - P"}]}, {"home": "Jax Tiger Sharks", "away": "No Luck - Just Legends", "games": [{"table": 27, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Team No Cap", "away": "Strokers - P", "games": [{"table": 28, "scorekeeper": "Team No Cap"}]}, {"home": "Still Salty", "away": "Geometrically Challenged", "games": [{"table": 29, "scorekeeper": "Still Salty"}]}, {"home": "Aaron K's Team", "away": "Last Call Legends", "games": [{"table": 30, "scorekeeper": "Aaron K's Team"}]}, {"home": "Geometrically Challenged", "away": "Still Salty", "games": [{"table": 31, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Last Call Legends", "away": "Aaron K's Team", "games": [{"table": 32, "scorekeeper": "Last Call Legends"}]}], "5": [{"home": "Geometrically Challenged", "away": "Rasson Assassins", "games": [{"table": 19, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Jax Tiger Sharks", "away": "Last Call Legends", "games": [{"table": 20, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Rasson Assassins", "away": "Geometrically Challenged", "games": [{"table": 21, "scorekeeper": "Rasson Assassins"}]}, {"home": "Last Call Legends", "away": "Jax Tiger Sharks", "games": [{"table": 22, "scorekeeper": "Last Call Legends"}]}, {"home": "8Ball Assassins", "away": "Strokers - D", "games": [{"table": 23, "scorekeeper": "8Ball Assassins"}]}, {"home": "Strokers - P", "away": "Aaron K's Team", "games": [{"table": 24, "scorekeeper": "Strokers - P"}]}, {"home": "Strokers - D", "away": "8Ball Assassins", "games": [{"table": 25, "scorekeeper": "Strokers - D"}]}, {"home": "Aaron K's Team", "away": "Strokers - P", "games": [{"table": 26, "scorekeeper": "Aaron K's Team"}]}, {"home": "Dead Stroke Society", "away": "Still Salty", "games": [{"table": 27, "scorekeeper": "Dead Stroke Society"}]}, {"home": "It's Not Clocking", "away": "No Luck - Just Legends", "games": [{"table": 28, "scorekeeper": "It's Not Clocking"}]}, {"home": "Still Salty", "away": "Dead Stroke Society", "games": [{"table": 29, "scorekeeper": "Still Salty"}]}, {"home": "No Luck - Just Legends", "away": "It's Not Clocking", "games": [{"table": 30, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Strokers - J", "away": "Team No Cap", "games": [{"table": 31, "scorekeeper": "Strokers - J"}]}, {"home": "Team No Cap", "away": "Strokers - J", "games": [{"table": 32, "scorekeeper": "Team No Cap"}]}], "6": [{"home": "Last Call Legends", "away": "It's Not Clocking", "games": [{"table": 19, "scorekeeper": "Last Call Legends"}]}, {"home": "No Luck - Just Legends", "away": "Geometrically Challenged", "games": [{"table": 20, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "It's Not Clocking", "away": "Last Call Legends", "games": [{"table": 21, "scorekeeper": "It's Not Clocking"}]}, {"home": "Geometrically Challenged", "away": "No Luck - Just Legends", "games": [{"table": 22, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Dead Stroke Society", "away": "Rasson Assassins", "games": [{"table": 23, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Team No Cap", "away": "Strokers - D", "games": [{"table": 24, "scorekeeper": "Team No Cap"}]}, {"home": "Rasson Assassins", "away": "Dead Stroke Society", "games": [{"table": 25, "scorekeeper": "Rasson Assassins"}]}, {"home": "Strokers - D", "away": "Team No Cap", "games": [{"table": 26, "scorekeeper": "Strokers - D"}]}, {"home": "Aaron K's Team", "away": "Jax Tiger Sharks", "games": [{"table": 27, "scorekeeper": "Aaron K's Team"}]}, {"home": "Strokers - J", "away": "Strokers - P", "games": [{"table": 28, "scorekeeper": "Strokers - J"}]}, {"home": "Jax Tiger Sharks", "away": "Aaron K's Team", "games": [{"table": 29, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Strokers - P", "away": "Strokers - J", "games": [{"table": 30, "scorekeeper": "Strokers - P"}]}, {"home": "8Ball Assassins", "away": "Still Salty", "games": [{"table": 31, "scorekeeper": "8Ball Assassins"}]}, {"home": "Still Salty", "away": "8Ball Assassins", "games": [{"table": 32, "scorekeeper": "Still Salty"}]}], "7": [{"home": "Geometrically Challenged", "away": "Last Call Legends", "games": [{"table": 19, "scorekeeper": "Geometrically Challenged"}]}, {"home": "It's Not Clocking", "away": "Jax Tiger Sharks", "games": [{"table": 20, "scorekeeper": "It's Not Clocking"}]}, {"home": "Last Call Legends", "away": "Geometrically Challenged", "games": [{"table": 21, "scorekeeper": "Last Call Legends"}]}, {"home": "Jax Tiger Sharks", "away": "It's Not Clocking", "games": [{"table": 22, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Aaron K's Team", "away": "Strokers - J", "games": [{"table": 23, "scorekeeper": "Aaron K's Team"}]}, {"home": "Strokers - J", "away": "Aaron K's Team", "games": [{"table": 24, "scorekeeper": "Strokers - J"}]}, {"home": "8Ball Assassins", "away": "Rasson Assassins", "games": [{"table": 25, "scorekeeper": "8Ball Assassins"}]}, {"home": "Dead Stroke Society", "away": "No Luck - Just Legends", "games": [{"table": 26, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Rasson Assassins", "away": "8Ball Assassins", "games": [{"table": 27, "scorekeeper": "Rasson Assassins"}]}, {"home": "No Luck - Just Legends", "away": "Dead Stroke Society", "games": [{"table": 28, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Strokers - P", "away": "Strokers - D", "games": [{"table": 29, "scorekeeper": "Strokers - P"}]}, {"home": "Team No Cap", "away": "Still Salty", "games": [{"table": 30, "scorekeeper": "Team No Cap"}]}, {"home": "Strokers - D", "away": "Strokers - P", "games": [{"table": 31, "scorekeeper": "Strokers - D"}]}, {"home": "Still Salty", "away": "Team No Cap", "games": [{"table": 32, "scorekeeper": "Still Salty"}]}], "8": [{"home": "Last Call Legends", "away": "Dead Stroke Society", "games": [{"table": 19, "scorekeeper": "Last Call Legends"}]}, {"home": "Strokers - P", "away": "Still Salty", "games": [{"table": 20, "scorekeeper": "Strokers - P"}]}, {"home": "Dead Stroke Society", "away": "Last Call Legends", "games": [{"table": 21, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Still Salty", "away": "Strokers - P", "games": [{"table": 22, "scorekeeper": "Still Salty"}]}, {"home": "No Luck - Just Legends", "away": "8Ball Assassins", "games": [{"table": 23, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Aaron K's Team", "away": "It's Not Clocking", "games": [{"table": 24, "scorekeeper": "Aaron K's Team"}]}, {"home": "8Ball Assassins", "away": "No Luck - Just Legends", "games": [{"table": 25, "scorekeeper": "8Ball Assassins"}]}, {"home": "It's Not Clocking", "away": "Aaron K's Team", "games": [{"table": 26, "scorekeeper": "It's Not Clocking"}]}, {"home": "Jax Tiger Sharks", "away": "Geometrically Challenged", "games": [{"table": 27, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Team No Cap", "away": "Rasson Assassins", "games": [{"table": 28, "scorekeeper": "Team No Cap"}]}, {"home": "Geometrically Challenged", "away": "Jax Tiger Sharks", "games": [{"table": 29, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Rasson Assassins", "away": "Team No Cap", "games": [{"table": 30, "scorekeeper": "Rasson Assassins"}]}, {"home": "Strokers - J", "away": "Strokers - D", "games": [{"table": 31, "scorekeeper": "Strokers - J"}]}, {"home": "Strokers - D", "away": "Strokers - J", "games": [{"table": 32, "scorekeeper": "Strokers - D"}]}], "9": [{"home": "No Luck - Just Legends", "away": "Team No Cap", "games": [{"table": 19, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Team No Cap", "away": "No Luck - Just Legends", "games": [{"table": 20, "scorekeeper": "Team No Cap"}]}, {"home": "Strokers - D", "away": "Aaron K's Team", "games": [{"table": 21, "scorekeeper": "Strokers - D"}]}, {"home": "8Ball Assassins", "away": "Last Call Legends", "games": [{"table": 22, "scorekeeper": "8Ball Assassins"}]}, {"home": "Aaron K's Team", "away": "Strokers - D", "games": [{"table": 23, "scorekeeper": "Aaron K's Team"}]}, {"home": "Last Call Legends", "away": "8Ball Assassins", "games": [{"table": 24, "scorekeeper": "Last Call Legends"}]}, {"home": "Geometrically Challenged", "away": "It's Not Clocking", "games": [{"table": 25, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Strokers - J", "away": "Still Salty", "games": [{"table": 26, "scorekeeper": "Strokers - J"}]}, {"home": "It's Not Clocking", "away": "Geometrically Challenged", "games": [{"table": 27, "scorekeeper": "It's Not Clocking"}]}, {"home": "Still Salty", "away": "Strokers - J", "games": [{"table": 28, "scorekeeper": "Still Salty"}]}, {"home": "Strokers - P", "away": "Rasson Assassins", "games": [{"table": 29, "scorekeeper": "Strokers - P"}]}, {"home": "Dead Stroke Society", "away": "Jax Tiger Sharks", "games": [{"table": 30, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Rasson Assassins", "away": "Strokers - P", "games": [{"table": 31, "scorekeeper": "Rasson Assassins"}]}, {"home": "Jax Tiger Sharks", "away": "Dead Stroke Society", "games": [{"table": 32, "scorekeeper": "Jax Tiger Sharks"}]}], "10": [{"home": "Jax Tiger Sharks", "away": "8Ball Assassins", "games": [{"table": 19, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Aaron K's Team", "away": "Geometrically Challenged", "games": [{"table": 20, "scorekeeper": "Aaron K's Team"}]}, {"home": "8Ball Assassins", "away": "Jax Tiger Sharks", "games": [{"table": 21, "scorekeeper": "8Ball Assassins"}]}, {"home": "Geometrically Challenged", "away": "Aaron K's Team", "games": [{"table": 22, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Team No Cap", "away": "Last Call Legends", "games": [{"table": 23, "scorekeeper": "Team No Cap"}]}, {"home": "Rasson Assassins", "away": "Strokers - J", "games": [{"table": 24, "scorekeeper": "Rasson Assassins"}]}, {"home": "Last Call Legends", "away": "Team No Cap", "games": [{"table": 25, "scorekeeper": "Last Call Legends"}]}, {"home": "Strokers - J", "away": "Rasson Assassins", "games": [{"table": 26, "scorekeeper": "Strokers - J"}]}, {"home": "It's Not Clocking", "away": "Dead Stroke Society", "games": [{"table": 27, "scorekeeper": "It's Not Clocking"}]}, {"home": "No Luck - Just Legends", "away": "Strokers - P", "games": [{"table": 28, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Dead Stroke Society", "away": "It's Not Clocking", "games": [{"table": 29, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Strokers - P", "away": "No Luck - Just Legends", "games": [{"table": 30, "scorekeeper": "Strokers - P"}]}, {"home": "Strokers - D", "away": "Still Salty", "games": [{"table": 31, "scorekeeper": "Strokers - D"}]}, {"home": "Still Salty", "away": "Strokers - D", "games": [{"table": 32, "scorekeeper": "Still Salty"}]}], "11": [{"home": "Dead Stroke Society", "away": "Geometrically Challenged", "games": [{"table": 19, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Still Salty", "away": "Aaron K's Team", "games": [{"table": 20, "scorekeeper": "Still Salty"}]}, {"home": "Geometrically Challenged", "away": "Dead Stroke Society", "games": [{"table": 21, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Aaron K's Team", "away": "Still Salty", "games": [{"table": 22, "scorekeeper": "Aaron K's Team"}]}, {"home": "Strokers - J", "away": "No Luck - Just Legends", "games": [{"table": 23, "scorekeeper": "Strokers - J"}]}, {"home": "No Luck - Just Legends", "away": "Strokers - J", "games": [{"table": 24, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "8Ball Assassins", "away": "It's Not Clocking", "games": [{"table": 25, "scorekeeper": "8Ball Assassins"}]}, {"home": "Strokers - P", "away": "Last Call Legends", "games": [{"table": 26, "scorekeeper": "Strokers - P"}]}, {"home": "It's Not Clocking", "away": "8Ball Assassins", "games": [{"table": 27, "scorekeeper": "It's Not Clocking"}]}, {"home": "Last Call Legends", "away": "Strokers - P", "games": [{"table": 28, "scorekeeper": "Last Call Legends"}]}, {"home": "Team No Cap", "away": "Jax Tiger Sharks", "games": [{"table": 29, "scorekeeper": "Team No Cap"}]}, {"home": "Strokers - D", "away": "Rasson Assassins", "games": [{"table": 30, "scorekeeper": "Strokers - D"}]}, {"home": "Jax Tiger Sharks", "away": "Team No Cap", "games": [{"table": 31, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Rasson Assassins", "away": "Strokers - D", "games": [{"table": 32, "scorekeeper": "Rasson Assassins"}]}], "12": [{"home": "It's Not Clocking", "away": "Team No Cap", "games": [{"table": 19, "scorekeeper": "It's Not Clocking"}]}, {"home": "Strokers - D", "away": "No Luck - Just Legends", "games": [{"table": 20, "scorekeeper": "Strokers - D"}]}, {"home": "Team No Cap", "away": "It's Not Clocking", "games": [{"table": 21, "scorekeeper": "Team No Cap"}]}, {"home": "No Luck - Just Legends", "away": "Strokers - D", "games": [{"table": 22, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Aaron K's Team", "away": "Dead Stroke Society", "games": [{"table": 23, "scorekeeper": "Aaron K's Team"}]}, {"home": "Strokers - P", "away": "Jax Tiger Sharks", "games": [{"table": 24, "scorekeeper": "Strokers - P"}]}, {"home": "Dead Stroke Society", "away": "Aaron K's Team", "games": [{"table": 25, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Jax Tiger Sharks", "away": "Strokers - P", "games": [{"table": 26, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Geometrically Challenged", "away": "8Ball Assassins", "games": [{"table": 27, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Rasson Assassins", "away": "Still Salty", "games": [{"table": 28, "scorekeeper": "Rasson Assassins"}]}, {"home": "8Ball Assassins", "away": "Geometrically Challenged", "games": [{"table": 29, "scorekeeper": "8Ball Assassins"}]}, {"home": "Still Salty", "away": "Rasson Assassins", "games": [{"table": 30, "scorekeeper": "Still Salty"}]}, {"home": "Strokers - J", "away": "Last Call Legends", "games": [{"table": 31, "scorekeeper": "Strokers - J"}]}, {"home": "Last Call Legends", "away": "Strokers - J", "games": [{"table": 32, "scorekeeper": "Last Call Legends"}]}], "13": [{"home": "Still Salty", "away": "No Luck - Just Legends", "games": [{"table": 19, "scorekeeper": "Still Salty"}]}, {"home": "Strokers - J", "away": "Jax Tiger Sharks", "games": [{"table": 20, "scorekeeper": "Strokers - J"}]}, {"home": "No Luck - Just Legends", "away": "Still Salty", "games": [{"table": 21, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "Jax Tiger Sharks", "away": "Strokers - J", "games": [{"table": 22, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Team No Cap", "away": "Geometrically Challenged", "games": [{"table": 23, "scorekeeper": "Team No Cap"}]}, {"home": "Geometrically Challenged", "away": "Team No Cap", "games": [{"table": 24, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Rasson Assassins", "away": "Aaron K's Team", "games": [{"table": 25, "scorekeeper": "Rasson Assassins"}]}, {"home": "8Ball Assassins", "away": "Dead Stroke Society", "games": [{"table": 26, "scorekeeper": "8Ball Assassins"}]}, {"home": "Aaron K's Team", "away": "Rasson Assassins", "games": [{"table": 27, "scorekeeper": "Aaron K's Team"}]}, {"home": "Dead Stroke Society", "away": "8Ball Assassins", "games": [{"table": 28, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Strokers - P", "away": "It's Not Clocking", "games": [{"table": 29, "scorekeeper": "Strokers - P"}]}, {"home": "Strokers - D", "away": "Last Call Legends", "games": [{"table": 30, "scorekeeper": "Strokers - D"}]}, {"home": "It's Not Clocking", "away": "Strokers - P", "games": [{"table": 31, "scorekeeper": "It's Not Clocking"}]}, {"home": "Last Call Legends", "away": "Strokers - D", "games": [{"table": 32, "scorekeeper": "Last Call Legends"}]}], "14": [{"home": "Still Salty", "away": "Last Call Legends", "games": [{"table": 19, "scorekeeper": "Still Salty"}]}, {"home": "Geometrically Challenged", "away": "Strokers - P", "games": [{"table": 20, "scorekeeper": "Geometrically Challenged"}]}, {"home": "Last Call Legends", "away": "Still Salty", "games": [{"table": 21, "scorekeeper": "Last Call Legends"}]}, {"home": "Strokers - P", "away": "Geometrically Challenged", "games": [{"table": 22, "scorekeeper": "Strokers - P"}]}, {"home": "Aaron K's Team", "away": "8Ball Assassins", "games": [{"table": 23, "scorekeeper": "Aaron K's Team"}]}, {"home": "Strokers - D", "away": "Jax Tiger Sharks", "games": [{"table": 24, "scorekeeper": "Strokers - D"}]}, {"home": "8Ball Assassins", "away": "Aaron K's Team", "games": [{"table": 25, "scorekeeper": "8Ball Assassins"}]}, {"home": "Jax Tiger Sharks", "away": "Strokers - D", "games": [{"table": 26, "scorekeeper": "Jax Tiger Sharks"}]}, {"home": "Rasson Assassins", "away": "No Luck - Just Legends", "games": [{"table": 27, "scorekeeper": "Rasson Assassins"}]}, {"home": "Strokers - J", "away": "It's Not Clocking", "games": [{"table": 28, "scorekeeper": "Strokers - J"}]}, {"home": "No Luck - Just Legends", "away": "Rasson Assassins", "games": [{"table": 29, "scorekeeper": "No Luck - Just Legends"}]}, {"home": "It's Not Clocking", "away": "Strokers - J", "games": [{"table": 30, "scorekeeper": "It's Not Clocking"}]}, {"home": "Dead Stroke Society", "away": "Team No Cap", "games": [{"table": 31, "scorekeeper": "Dead Stroke Society"}]}, {"home": "Team No Cap", "away": "Dead Stroke Society", "games": [{"table": 32, "scorekeeper": "Team No Cap"}]}]}};
+</script>
+
+<header>
+  <h1 id="venue-name"></h1>
+  <p id="venue-sub"></p>
+</header>
+
+<div class="week-nav">
+  <button class="nav-btn" id="prev-btn" onclick="changeWeek(-1)">&#8592;</button>
+  <div class="week-info">
+    <strong id="week-label"></strong>
+    <small id="week-date"></small>
+  </div>
+  <button class="nav-btn" id="next-btn" onclick="changeWeek(1)">&#8594;</button>
+  <select class="week-select" id="week-select" onchange="goToWeek(+this.value)"></select>
+</div>
+
+<div class="matches" id="matches"></div>
+
+<footer>Generated by UPL Table Assignments</footer>
+
+<script>
+  const weeks = Object.keys(SCHEDULE.weeks).map(Number).sort((a, b) => a - b);
+  let current = weeks[0];
+
+  function weekDate(w) {
+    if (!SCHEDULE.startDate) return null;
+    const start = new Date(SCHEDULE.startDate + 'T12:00:00');
+    return new Date(start.getTime() + (w - 1) * SCHEDULE.intervalDays * 86400000);
+  }
+
+  function currentWeek() {
+    if (!SCHEDULE.startDate) return weeks[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // Find the first week that is today or in the future
+    for (const w of weeks) {
+      const d = weekDate(w);
+      d.setHours(0, 0, 0, 0);
+      if (d >= today) return w;
+    }
+    return weeks[weeks.length - 1]; // all weeks past — show last
+  }
+
+  function isTonight(w) {
+    if (!SCHEDULE.startDate) return false;
+    const d = weekDate(w);
+    const today = new Date();
+    return d.getFullYear() === today.getFullYear() &&
+           d.getMonth()    === today.getMonth()    &&
+           d.getDate()     === today.getDate();
+  }
+
+  function changeWeek(delta) {
+    const idx = weeks.indexOf(current) + delta;
+    if (idx >= 0 && idx < weeks.length) goToWeek(weeks[idx]);
+  }
+
+  function goToWeek(w) {
+    current = w;
+    render();
+  }
+
+  function render() {
+    document.getElementById('venue-name').textContent = SCHEDULE.venueName;
+    document.getElementById('venue-sub').textContent =
+      weeks.length + ' week' + (weeks.length !== 1 ? 's' : '');
+
+    const idx = weeks.indexOf(current);
+    document.getElementById('prev-btn').disabled = idx === 0;
+    document.getElementById('next-btn').disabled = idx === weeks.length - 1;
+
+    const tonight = isTonight(current);
+    const badge = tonight ? '<span class="tonight-badge">Tonight</span>' : '';
+    document.getElementById('week-label').innerHTML = 'Week ' + current + badge;
+
+    const d = weekDate(current);
+    document.getElementById('week-date').textContent = d
+      ? d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+      : '';
+
+    const sel = document.getElementById('week-select');
+    sel.innerHTML = weeks.map(w =>
+      `<option value="${w}" ${w === current ? 'selected' : ''}>Week ${w}</option>`
+    ).join('');
+
+    const matchups = SCHEDULE.weeks[String(current)] || [];
+    document.getElementById('matches').innerHTML = matchups.map(m => {
+      const tables = m.games.map(g => g.table).join(' & ');
+      const rows = m.games.map(g => {
+        const isHome = g.scorekeeper === m.home;
+        const isAway = g.scorekeeper === m.away;
+        const skTeam = g.scorekeeper;
+        // Determine which team is which for this game's scorekeeper line
+        const homeLine = `
+          <div class="game-row">
+            <div class="game-left">
+              <span class="table-pill">${g.table}</span>
+              <span class="team-name">${m.home}</span>
+              <span class="role-tag">H</span>
+            </div>
+            ${skTeam === m.home ? '<span class="sk-badge">Scorekeeper</span>' : ''}
+          </div>`;
+        const awayLine = `
+          <div class="game-row">
+            <div class="game-left">
+              <span class="table-pill">${g.table}</span>
+              <span class="team-name">${m.away}</span>
+              <span class="role-tag">A</span>
+            </div>
+            ${skTeam === m.away ? '<span class="sk-badge">Scorekeeper</span>' : ''}
+          </div>`;
+        return skTeam === m.home ? homeLine : awayLine;
+      }).join('');
+
+      return `
+        <div class="card">
+          <div class="card-header">Tables ${tables}</div>
+          <div class="card-body">${rows}</div>
+        </div>`;
+    }).join('');
+  }
+
+  current = currentWeek();
+  render();
+</script>
+</body>
+</html>
