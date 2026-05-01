@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPL Pool League</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    header {
+      background: #0f172a;
+      color: #fff;
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+
+    /* ── Main ───────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: 720px;
+      width: 100%;
+      margin: 2.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Division cards ─────────────────────────────── */
+    .divisions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .division-card {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      padding: 1.25rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      gap: 1.25rem;
+      transition: box-shadow 0.15s, transform 0.1s;
+    }
+    .division-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      transform: translateY(-1px);
+    }
+
+    .card-night {
+      background: #ede9fe;
+      color: #5b21b6;
+      border-radius: 10px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .card-venue {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      flex: 1;
+    }
+
+    .card-cta {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+      white-space: nowrap;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.15s;
+    }
+    .division-card:hover .card-cta {
+      color: #5b21b6;
+    }
+    .arrow {
+      font-size: 1rem;
+      transition: transform 0.15s;
+    }
+    .division-card:hover .arrow {
+      transform: translateX(3px);
+    }
+
+    /* ── Footer ─────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #94a3b8;
+      font-size: 0.75rem;
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.5rem; }
+      .card-cta { display: none; }
+      .division-card { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>UPL Pool League</h1>
+  <p>Select your division to view the table assignments</p>
+</header>
+
+<main>
+  <div class="section-label">Divisions</div>
+  <div class="divisions">
+    <a class="division-card" href="diamond_friday_assignments.html">
+      <div class="card-night">Fridays</div>
+      <div class="card-venue">Diamond Billiards</div>
+      <div class="card-cta">View Schedule <span class="arrow">&#8594;</span></div>
+    </a>
+    <a class="division-card" href="legends_tuesday_assignments.html">
+      <div class="card-night">Tuesdays</div>
+      <div class="card-venue">Legends Billiards</div>
+      <div class="card-cta">View Schedule <span class="arrow">&#8594;</span></div>
+    </a>
+  </div>
+</main>
+
+<footer>Made with &#9825; by Kade</footer>
+
+</body>
+</html>
