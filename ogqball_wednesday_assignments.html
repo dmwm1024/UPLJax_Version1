@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPLJax - Table Assignments</title>
+  <title>UPL Pool League</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f172a'/%3E%3Ctext x='16' y='13' font-family='Arial,sans-serif' font-size='11' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'%3EUPL%3C/text%3E%3Ctext x='16' y='24' font-family='Arial,sans-serif' font-size='11' font-weight='bold' fill='%23a78bfa' text-anchor='middle' dominant-baseline='middle'%3EJAX%3C/text%3E%3C/svg%3E">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,271 +13,120 @@
       background: #f1f5f9;
       color: #0f172a;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* ── Header ─────────────────────────────────────── */
     header {
       background: #0f172a;
       color: #fff;
-      padding: 1.25rem 1.5rem 1.25rem;
+      padding: 1.5rem 2rem;
       display: flex;
       align-items: center;
       gap: 1.25rem;
     }
     .header-logo {
-      height: 48px;
+      height: 52px;
       width: auto;
       flex-shrink: 0;
     }
-    .header-text { text-align: left; }
-    .back-link {
-      color: #64748b;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-decoration: none;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: color 0.15s;
-    }
-    .back-link:hover { color: #e2e8f0; }
-    .header-session {
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #94a3b8;
-    }
-    .header-session .date-range {
-      font-weight: 500;
-      text-transform: none;
-      letter-spacing: 0;
-    }
+    .header-text { flex: 1; }
     header h1 {
-      font-size: 1.35rem;
+      font-size: 1.6rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      margin-top: 0.2rem;
+    }
+    header p {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
     }
 
-    /* ── Week navigation ─────────────────────────────── */
-    .week-nav {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      padding: 0.875rem 1rem;
-      background: #fff;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-    .nav-btn {
-      background: #0f172a;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      width: 2.25rem;
-      height: 2.25rem;
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.15s;
-    }
-    .nav-btn:hover:not(:disabled) { background: #1e293b; }
-    .nav-btn:disabled { background: #cbd5e1; cursor: default; }
-    .week-info { text-align: center; min-width: 150px; }
-    .week-info strong { display: block; font-size: 1.05rem; font-weight: 700; }
-    .week-info small { color: #64748b; font-size: 0.75rem; }
-    .week-select {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 0.4rem 0.6rem;
-      font-size: 0.875rem;
-      background: #f8fafc;
-      cursor: pointer;
-      color: #0f172a;
-    }
-    .tonight-badge {
-      display: inline-block;
-      background: #dcfce7;
-      color: #166534;
-      font-size: 0.65rem;
-      font-weight: 800;
-      border-radius: 20px;
-      padding: 0.15rem 0.55rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-left: 0.4rem;
-      vertical-align: middle;
-    }
-
-    /* ── Page layout ─────────────────────────────────── */
-    .page {
-      max-width: 1200px;
-      margin: 1.5rem auto;
-      padding: 0 1rem;
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    /* ── Match list ──────────────────────────────────── */
-    .match-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.875rem;
-    }
-
-    /* ── Match card ──────────────────────────────────── */
-    .match-card {
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      overflow: hidden;
-    }
-
-    /* Top half: home vs away */
-    .match-teams {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      padding: 1rem 1.25rem 0.875rem;
-      gap: 0.75rem;
-    }
-    .team-block { display: flex; flex-direction: column; gap: 0.2rem; }
-    .team-block.home { align-items: flex-start; }
-    .team-block.away { align-items: flex-end; text-align: right; }
-    .team-role {
-      font-size: 0.6rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    .team-block.home .team-role { color: #2563eb; }
-    .team-block.away .team-role { color: #64748b; }
-    .team-label {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0f172a;
-      line-height: 1.25;
-    }
-    .vs-divider {
-      color: #cbd5e1;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-    .game-type-badge {
-      display: inline-block;
-      background: #e0f2fe;
-      color: #0369a1;
-      font-size: 0.65rem;
-      font-weight: 800;
-      border-radius: 20px;
-      padding: 0.15rem 0.55rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-left: 0.4rem;
-      vertical-align: middle;
-    }
-
-    /* Bottom half: game rows */
-    .match-games {
-      border-top: 1px solid #f1f5f9;
-      padding: 0.5rem 1.25rem 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-    .game-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.35rem 0;
-    }
-    .game-row + .game-row {
-      border-top: 1px solid #f8fafc;
-    }
-    .table-badge {
-      background: #ede9fe;
-      color: #5b21b6;
-      border-radius: 8px;
-      padding: 0.25rem 0.65rem;
-      font-size: 0.78rem;
-      font-weight: 800;
-      flex-shrink: 0;
-      min-width: 4.25rem;
-      text-align: center;
-    }
-    .game-sk-label {
-      font-size: 0.8rem;
-      color: #475569;
+    /* ── Main ───────────────────────────────────────── */
+    main {
       flex: 1;
-    }
-    .game-sk-label strong { color: #0f172a; font-weight: 600; }
-    .sk-badge {
-      background: #fef9c3;
-      color: #854d0e;
-      border-radius: 6px;
-      padding: 0.15rem 0.5rem;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      flex-shrink: 0;
+      max-width: 720px;
+      width: 100%;
+      margin: 2.5rem auto;
+      padding: 0 1rem;
     }
 
-    /* ── Sidebar ─────────────────────────────────────── */
-    .sidebar { position: sticky; top: 68px; }
-    .sidebar-card {
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      overflow: hidden;
-    }
-    .sidebar-heading {
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 0.75rem 1rem;
+    .section-label {
       font-size: 0.7rem;
       font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 1rem;
     }
-    .sidebar-team {
+
+    /* ── Division cards ─────────────────────────────── */
+    .divisions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .division-card {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0.6rem 1rem;
-      gap: 0.5rem;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      padding: 1.25rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      gap: 1.25rem;
+      transition: box-shadow 0.15s, transform 0.1s;
     }
-    .sidebar-team + .sidebar-team { border-top: 1px solid #f1f5f9; }
-    .sidebar-team-name {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #1e293b;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .division-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      transform: translateY(-1px);
     }
-    .sidebar-tables {
+
+    .card-night {
       background: #ede9fe;
       color: #5b21b6;
-      border-radius: 8px;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.78rem;
+      border-radius: 10px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.82rem;
       font-weight: 800;
+      letter-spacing: 0.04em;
       white-space: nowrap;
       flex-shrink: 0;
     }
 
+    .card-venue {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      flex: 1;
+    }
+
+    .card-cta {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+      white-space: nowrap;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.15s;
+    }
+    .division-card:hover .card-cta {
+      color: #5b21b6;
+    }
+    .arrow {
+      font-size: 1rem;
+      transition: transform 0.15s;
+    }
+    .division-card:hover .arrow {
+      transform: translateX(3px);
+    }
+
+    /* ── Footer ─────────────────────────────────────── */
     footer {
       text-align: center;
       padding: 2rem 1rem;
@@ -286,171 +135,29 @@
     }
 
     /* ── Responsive ──────────────────────────────────── */
-    @media (max-width: 780px) {
-      .page { grid-template-columns: 1fr; }
-      .sidebar { position: static; }
-      /* Show sidebar below matches on mobile */
-      .sidebar { order: 2; }
-      .match-list { order: 1; }
-    }
     @media (max-width: 480px) {
-      header h1 { font-size: 1.35rem; }
-      .team-label { font-size: 0.85rem; }
+      header h1 { font-size: 1.5rem; }
+      .card-cta { display: none; }
+      .division-card { gap: 1rem; }
     }
   </style>
 </head>
 <body>
 
-<script>const SCHEDULE = {"venueName": "OG Q-Ball - Wednesdays", "session": "Session 3", "dateRange": "May 27 \u2013 Aug 26, 2026", "startDate": "2026-05-27", "intervalDays": 7, "weeks": {"1": [{"home": "All Game No Fame", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Salty Strokers", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Salty Strokers"}]}, {"home": "Strokers - Mf", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cue Tang Clan", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Table Terrors", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Table Terrors"}]}, {"home": "So Good", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "So Good"}]}, {"home": "Insane As Well", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Insane As Well"}]}, {"home": "The Real Strokers", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "The Real Strokers"}]}, {"home": "No Pressure", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "No Pressure"}]}, {"home": "Cuephoria", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cuephoria"}]}], "2": [{"home": "Cue Tang Clan", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Cuephoria", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Cuephoria"}]}, {"home": "Table Terrors", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "No Pressure"}]}, {"home": "Strokers - Mf", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Strokers - Mf"}]}, {"home": "Insane As Well", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Insane As Well"}]}, {"home": "So Good", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "So Good"}]}, {"home": "Salty Strokers", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Salty Strokers"}]}, {"home": "The Real Strokers", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "The Real Strokers"}]}, {"home": "All Game No Fame", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "All Game No Fame"}]}], "3": [{"home": "All Game No Fame", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "So Good", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "So Good"}]}, {"home": "No Pressure", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "No Pressure"}]}, {"home": "Insane As Well", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Insane As Well"}]}, {"home": "Table Terrors", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Table Terrors"}]}, {"home": "The Real Strokers", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "The Real Strokers"}]}, {"home": "Strokers - Mf", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cue Tang Clan", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Salty Strokers", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Salty Strokers"}]}, {"home": "Cuephoria", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cuephoria"}]}], "4": [{"home": "Cue Tang Clan", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Insane As Well", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Insane As Well"}]}, {"home": "Cuephoria", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Cuephoria"}]}, {"home": "Salty Strokers", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Salty Strokers"}]}, {"home": "No Pressure", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "No Pressure"}]}, {"home": "So Good", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "So Good"}]}, {"home": "Table Terrors", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Table Terrors"}]}, {"home": "All Game No Fame", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "All Game No Fame"}]}, {"home": "The Real Strokers", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "The Real Strokers"}]}, {"home": "Strokers - Mf", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Strokers - Mf"}]}], "5": [{"home": "So Good", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "So Good"}]}, {"home": "Cuephoria", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Cuephoria"}]}, {"home": "Salty Strokers", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Salty Strokers"}]}, {"home": "Cue Tang Clan", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Table Terrors", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Table Terrors"}]}, {"home": "The Real Strokers", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "The Real Strokers"}]}, {"home": "Strokers - Mf", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Strokers - Mf"}]}, {"home": "Insane As Well", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Insane As Well"}]}, {"home": "No Pressure", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "No Pressure"}]}, {"home": "All Game No Fame", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "All Game No Fame"}]}], "6": [{"home": "All Game No Fame", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Insane As Well", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Insane As Well"}]}, {"home": "Cue Tang Clan", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Strokers - Mf", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Strokers - Mf"}]}, {"home": "Salty Strokers", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Salty Strokers"}]}, {"home": "Cuephoria", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Cuephoria"}]}, {"home": "Table Terrors", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "No Pressure"}]}, {"home": "The Real Strokers", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "The Real Strokers"}]}, {"home": "So Good", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "So Good"}]}], "7": [{"home": "Cuephoria", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cuephoria"}]}, {"home": "Strokers - Mf", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Strokers - Mf"}]}, {"home": "Salty Strokers", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Salty Strokers"}]}, {"home": "The Real Strokers", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "The Real Strokers"}]}, {"home": "No Pressure", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "No Pressure"}]}, {"home": "All Game No Fame", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "All Game No Fame"}]}, {"home": "So Good", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "So Good"}]}, {"home": "Insane As Well", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Insane As Well"}]}, {"home": "Cue Tang Clan", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Table Terrors", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Table Terrors"}]}], "8": [{"home": "All Game No Fame", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "The Real Strokers", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "The Real Strokers"}]}, {"home": "Insane As Well", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Insane As Well"}]}, {"home": "So Good", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "So Good"}]}, {"home": "Cue Tang Clan", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Cuephoria", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Cuephoria"}]}, {"home": "Table Terrors", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Table Terrors"}]}, {"home": "Strokers - Mf", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Strokers - Mf"}]}, {"home": "No Pressure", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "No Pressure"}]}, {"home": "Salty Strokers", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Salty Strokers"}]}], "9": [{"home": "Cuephoria", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cuephoria"}]}, {"home": "Salty Strokers", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Salty Strokers"}]}, {"home": "The Real Strokers", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "The Real Strokers"}]}, {"home": "All Game No Fame", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "All Game No Fame"}]}, {"home": "Strokers - Mf", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Strokers - Mf"}]}, {"home": "Table Terrors", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Table Terrors"}]}, {"home": "So Good", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "So Good"}]}, {"home": "No Pressure", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "No Pressure"}]}, {"home": "Cue Tang Clan", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Insane As Well", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Insane As Well"}]}], "10": [{"home": "Cue Tang Clan", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "The Real Strokers", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "The Real Strokers"}]}, {"home": "Cuephoria", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Cuephoria"}]}, {"home": "All Game No Fame", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "All Game No Fame"}]}, {"home": "Insane As Well", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Insane As Well"}]}, {"home": "No Pressure", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "No Pressure"}]}, {"home": "Table Terrors", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Table Terrors"}]}, {"home": "Salty Strokers", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Salty Strokers"}]}, {"home": "So Good", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "So Good"}]}, {"home": "Strokers - Mf", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Strokers - Mf"}]}], "11": [{"home": "Insane As Well", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Insane As Well"}]}, {"home": "No Pressure", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "No Pressure"}]}, {"home": "Salty Strokers", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Salty Strokers"}]}, {"home": "Table Terrors", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Table Terrors"}]}, {"home": "Cue Tang Clan", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Cue Tang Clan"}]}, {"home": "So Good", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "So Good"}]}, {"home": "Strokers - Mf", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cuephoria", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Cuephoria"}]}, {"home": "All Game No Fame", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "All Game No Fame"}]}, {"home": "The Real Strokers", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "The Real Strokers"}]}], "12": [{"home": "Cue Tang Clan", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Cuephoria", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Cuephoria"}]}, {"home": "Insane As Well", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Insane As Well"}]}, {"home": "Strokers - Mf", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Strokers - Mf"}]}, {"home": "Salty Strokers", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Salty Strokers"}]}, {"home": "All Game No Fame", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "All Game No Fame"}]}, {"home": "The Real Strokers", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "The Real Strokers"}]}, {"home": "No Pressure", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "No Pressure"}]}, {"home": "Table Terrors", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Table Terrors"}]}, {"home": "So Good", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "So Good"}]}], "13": [{"home": "All Game No Fame", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "No Pressure", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "No Pressure"}]}, {"home": "Strokers - Mf", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Strokers - Mf"}]}, {"home": "Table Terrors", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "Table Terrors"}]}, {"home": "Insane As Well", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Insane As Well"}]}, {"home": "The Real Strokers", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "The Real Strokers"}]}, {"home": "So Good", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "So Good"}]}, {"home": "Cuephoria", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Cuephoria"}]}, {"home": "Salty Strokers", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Salty Strokers"}]}, {"home": "Cue Tang Clan", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cue Tang Clan"}]}], "14": [{"home": "All Game No Fame", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Cue Tang Clan", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 2, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Table Terrors", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 7, "scorekeeper": "No Pressure"}]}, {"home": "So Good", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "So Good"}]}, {"home": "Cuephoria", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Cuephoria"}]}, {"home": "The Real Strokers", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "The Real Strokers"}]}, {"home": "Salty Strokers", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Salty Strokers"}]}, {"home": "Insane As Well", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Insane As Well"}]}, {"home": "Strokers - Mf", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Strokers - Mf"}]}]}};"1": [{"home": "All Game No Fame", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Cue Tang Clan", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Salty Strokers", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Salty Strokers"}]}, {"home": "No Pressure", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "No Pressure"}]}, {"home": "Cuephoria", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Cuephoria"}]}, {"home": "Table Terrors", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Table Terrors"}]}, {"home": "Insane As Well", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Insane As Well"}]}, {"home": "The Real Strokers", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "The Real Strokers"}]}, {"home": "Strokers - Mf", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Strokers - Mf"}]}, {"home": "So Good", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "So Good"}]}], "2": [{"home": "Cue Tang Clan", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "No Pressure", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "No Pressure"}]}, {"home": "The Real Strokers", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "The Real Strokers"}]}, {"home": "So Good", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "So Good"}]}, {"home": "Salty Strokers", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Salty Strokers"}]}, {"home": "All Game No Fame", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "All Game No Fame"}]}, {"home": "Cuephoria", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Cuephoria"}]}, {"home": "Strokers - Mf", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Strokers - Mf"}]}, {"home": "Table Terrors", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Table Terrors"}]}, {"home": "Insane As Well", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Insane As Well"}]}], "3": [{"home": "All Game No Fame", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Insane As Well", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Insane As Well"}]}, {"home": "Salty Strokers", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Salty Strokers"}]}, {"home": "Strokers - Mf", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cue Tang Clan", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Cuephoria", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Cuephoria"}]}, {"home": "So Good", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "So Good"}]}, {"home": "Table Terrors", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "No Pressure"}]}, {"home": "The Real Strokers", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "The Real Strokers"}]}], "4": [{"home": "Cue Tang Clan", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Salty Strokers", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Salty Strokers"}]}, {"home": "Insane As Well", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Insane As Well"}]}, {"home": "Table Terrors", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Table Terrors"}]}, {"home": "All Game No Fame", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "All Game No Fame"}]}, {"home": "No Pressure", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "No Pressure"}]}, {"home": "The Real Strokers", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "The Real Strokers"}]}, {"home": "Strokers - Mf", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cuephoria", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Cuephoria"}]}, {"home": "So Good", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "So Good"}]}], "5": [{"home": "So Good", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "So Good"}]}, {"home": "Cue Tang Clan", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Salty Strokers", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Salty Strokers"}]}, {"home": "Strokers - Mf", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Strokers - Mf"}]}, {"home": "Insane As Well", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Insane As Well"}]}, {"home": "The Real Strokers", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "The Real Strokers"}]}, {"home": "Cuephoria", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Cuephoria"}]}, {"home": "Table Terrors", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "No Pressure"}]}, {"home": "All Game No Fame", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "All Game No Fame"}]}], "6": [{"home": "All Game No Fame", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Strokers - Mf", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Strokers - Mf"}]}, {"home": "Table Terrors", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Table Terrors"}]}, {"home": "The Real Strokers", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "The Real Strokers"}]}, {"home": "So Good", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "So Good"}]}, {"home": "No Pressure", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "No Pressure"}]}, {"home": "Insane As Well", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Insane As Well"}]}, {"home": "Salty Strokers", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Salty Strokers"}]}, {"home": "Cue Tang Clan", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Cuephoria", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cuephoria"}]}], "7": [{"home": "Cuephoria", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cuephoria"}]}, {"home": "The Real Strokers", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "The Real Strokers"}]}, {"home": "So Good", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "So Good"}]}, {"home": "Cue Tang Clan", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Table Terrors", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Table Terrors"}]}, {"home": "Insane As Well", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Insane As Well"}]}, {"home": "Strokers - Mf", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Strokers - Mf"}]}, {"home": "No Pressure", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "No Pressure"}]}, {"home": "Salty Strokers", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Salty Strokers"}]}, {"home": "All Game No Fame", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "All Game No Fame"}]}], "8": [{"home": "All Game No Fame", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "So Good", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "So Good"}]}, {"home": "Table Terrors", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "No Pressure"}]}, {"home": "Salty Strokers", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Salty Strokers"}]}, {"home": "Strokers - Mf", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Strokers - Mf"}]}, {"home": "The Real Strokers", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "The Real Strokers"}]}, {"home": "Cue Tang Clan", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Insane As Well", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Insane As Well"}]}, {"home": "Cuephoria", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cuephoria"}]}], "9": [{"home": "Cuephoria", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cuephoria"}]}, {"home": "All Game No Fame", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "All Game No Fame"}]}, {"home": "Cue Tang Clan", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Cue Tang Clan"}]}, {"home": "The Real Strokers", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "The Real Strokers"}]}, {"home": "Table Terrors", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Table Terrors"}]}, {"home": "Insane As Well", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Insane As Well"}]}, {"home": "So Good", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "So Good"}]}, {"home": "No Pressure", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "No Pressure"}]}, {"home": "Salty Strokers", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Salty Strokers"}]}, {"home": "Strokers - Mf", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Strokers - Mf"}]}], "10": [{"home": "Cue Tang Clan", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "All Game No Fame", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "All Game No Fame"}]}, {"home": "So Good", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "So Good"}]}, {"home": "Cuephoria", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Cuephoria"}]}, {"home": "No Pressure", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "No Pressure"}]}, {"home": "Strokers - Mf", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Strokers - Mf"}]}, {"home": "Table Terrors", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Table Terrors"}]}, {"home": "Salty Strokers", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Salty Strokers"}]}, {"home": "The Real Strokers", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "The Real Strokers"}]}, {"home": "Insane As Well", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Insane As Well"}]}], "11": [{"home": "Insane As Well", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Insane As Well"}]}, {"home": "Table Terrors", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Table Terrors"}]}, {"home": "No Pressure", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "No Pressure"}]}, {"home": "Salty Strokers", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Salty Strokers"}]}, {"home": "So Good", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "So Good"}]}, {"home": "Cue Tang Clan", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Cue Tang Clan"}]}, {"home": "All Game No Fame", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "All Game No Fame"}]}, {"home": "The Real Strokers", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "The Real Strokers"}]}, {"home": "Strokers - Mf", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cuephoria", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cuephoria"}]}], "12": [{"home": "Cue Tang Clan", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Strokers - Mf", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Strokers - Mf"}]}, {"home": "Cuephoria", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Cuephoria"}]}, {"home": "Insane As Well", "away": "All Game No Fame", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Insane As Well"}]}, {"home": "All Game No Fame", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "All Game No Fame"}]}, {"home": "Salty Strokers", "away": "Cuephoria", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "Salty Strokers"}]}, {"home": "Table Terrors", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "Table Terrors"}]}, {"home": "So Good", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "So Good"}]}, {"home": "The Real Strokers", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "The Real Strokers"}]}, {"home": "No Pressure", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "No Pressure"}]}], "13": [{"home": "All Game No Fame", "away": "Table Terrors", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "Table Terrors", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "Table Terrors"}]}, {"home": "Strokers - Mf", "away": "The Real Strokers", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Strokers - Mf"}]}, {"home": "So Good", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "So Good"}]}, {"home": "Cuephoria", "away": "So Good", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Cuephoria"}]}, {"home": "The Real Strokers", "away": "Strokers - Mf", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "The Real Strokers"}]}, {"home": "No Pressure", "away": "Insane As Well", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "No Pressure"}]}, {"home": "Insane As Well", "away": "No Pressure", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Insane As Well"}]}, {"home": "Salty Strokers", "away": "Cue Tang Clan", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Salty Strokers"}]}, {"home": "Cue Tang Clan", "away": "Salty Strokers", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cue Tang Clan"}]}], "14": [{"home": "All Game No Fame", "away": "No Pressure", "game_type": "8-Ball", "games": [{"table": 1, "scorekeeper": "All Game No Fame"}]}, {"home": "No Pressure", "away": "All Game No Fame", "game_type": "10-Ball", "games": [{"table": 2, "scorekeeper": "No Pressure"}]}, {"home": "Cue Tang Clan", "away": "So Good", "game_type": "8-Ball", "games": [{"table": 3, "scorekeeper": "Cue Tang Clan"}]}, {"home": "Insane As Well", "away": "Strokers - Mf", "game_type": "8-Ball", "games": [{"table": 7, "scorekeeper": "Insane As Well"}]}, {"home": "Strokers - Mf", "away": "Insane As Well", "game_type": "10-Ball", "games": [{"table": 8, "scorekeeper": "Strokers - Mf"}]}, {"home": "So Good", "away": "Cue Tang Clan", "game_type": "10-Ball", "games": [{"table": 9, "scorekeeper": "So Good"}]}, {"home": "The Real Strokers", "away": "Salty Strokers", "game_type": "8-Ball", "games": [{"table": 13, "scorekeeper": "The Real Strokers"}]}, {"home": "Salty Strokers", "away": "The Real Strokers", "game_type": "10-Ball", "games": [{"table": 14, "scorekeeper": "Salty Strokers"}]}, {"home": "Table Terrors", "away": "Cuephoria", "game_type": "8-Ball", "games": [{"table": 15, "scorekeeper": "Table Terrors"}]}, {"home": "Cuephoria", "away": "Table Terrors", "game_type": "10-Ball", "games": [{"table": 16, "scorekeeper": "Cuephoria"}]}]}};</script>
-
 <header>
   <img src="data:image/png;base64,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" class="header-logo" alt="UPL Logo">
   <div class="header-text">
-    <div class="header-session" id="header-session"></div>
-    <h1 id="venue-name"></h1>
+    <h1>UPL Pool League</h1>
+    <p>This division is under maintenance.</p>
   </div>
-  <a class="back-link" href="index.html">&#8592; All Divisions</a>
 </header>
 
-<div class="week-nav">
-  <button class="nav-btn" id="prev-btn" onclick="changeWeek(-1)">&#8592;</button>
-  <div class="week-info">
-    <strong id="week-label"></strong>
-    <small id="week-date"></small>
-  </div>
-  <button class="nav-btn" id="next-btn" onclick="changeWeek(1)">&#8594;</button>
-  <select class="week-select" id="week-select" onchange="goToWeek(+this.value)"></select>
-</div>
+<main>
+  <div class="section-label">Under Maintenance</div>
+  <center><h1>Table assignments are being reviewed. Please check back shortly.</h1></center>
+</main>
 
-<div class="page">
-  <div class="match-list" id="match-list"></div>
-  <div class="sidebar">
-    <div class="sidebar-card">
-      <div class="sidebar-heading">Table Finder</div>
-      <div id="sidebar-teams"></div>
-    </div>
-  </div>
-</div>
+<footer>Made with &#9825; by Kade</footer>
 
-<footer>UPLJax - Made with ♥ by Kade</footer>
-
-<script>
-  const weeks = Object.keys(SCHEDULE.weeks).map(Number).sort((a, b) => a - b);
-  let current = weeks[0];
-
-  function weekDate(w) {
-    if (!SCHEDULE.startDate) return null;
-    const d = new Date(SCHEDULE.startDate + 'T12:00:00');
-    d.setDate(d.getDate() + (w - 1) * SCHEDULE.intervalDays);
-    return d;
-  }
-
-  function currentWeek() {
-    if (!SCHEDULE.startDate) return weeks[0];
-    const today = new Date(); today.setHours(0,0,0,0);
-    for (const w of weeks) {
-      const d = weekDate(w); d.setHours(0,0,0,0);
-      if (d >= today) return w;
-    }
-    return weeks[weeks.length - 1];
-  }
-
-  function isTonight(w) {
-    if (!SCHEDULE.startDate) return false;
-    const d = weekDate(w), t = new Date();
-    return d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
-  }
-
-  function changeWeek(delta) {
-    const i = weeks.indexOf(current) + delta;
-    if (i >= 0 && i < weeks.length) goToWeek(weeks[i]);
-  }
-
-  function goToWeek(w) { current = w; render(); }
-
-  function render() {
-    // Header
-    document.getElementById('venue-name').textContent = SCHEDULE.venueName;
-    const sessionEl = document.getElementById('header-session');
-    if (SCHEDULE.session || SCHEDULE.dateRange) {
-      const dr = SCHEDULE.dateRange ? `<span class="date-range"> &nbsp;·&nbsp; ${SCHEDULE.dateRange}</span>` : '';
-      sessionEl.innerHTML = (SCHEDULE.session || '') + dr;
-      sessionEl.style.display = '';
-    } else {
-      sessionEl.style.display = 'none';
-    }
-
-    // Nav
-    const idx = weeks.indexOf(current);
-    document.getElementById('prev-btn').disabled = idx === 0;
-    document.getElementById('next-btn').disabled = idx === weeks.length - 1;
-    const badge = isTonight(current) ? '<span class="tonight-badge">Tonight</span>' : '';
-    document.getElementById('week-label').innerHTML = 'Week ' + current + badge;
-    const d = weekDate(current);
-    document.getElementById('week-date').textContent = d
-      ? d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'})
-      : '';
-    document.getElementById('week-select').innerHTML = weeks.map(w =>
-      `<option value="${w}" ${w===current?'selected':''}>${w===current?'Week '+w:'Week '+w}</option>`
-    ).join('');
-
-    const matchups = SCHEDULE.weeks[String(current)] || [];
-
-    // Match cards
-    document.getElementById('match-list').innerHTML = matchups.map(m => {
-      const gameRows = m.games.map(g => `
-        <div class="game-row">
-          <span class="table-badge">Table ${g.table}</span>
-          <span class="game-sk-label">Scorekeeper: <strong>${g.scorekeeper}</strong></span>
-          ${g.scorekeeper === m.home
-            ? '<span class="sk-badge">Home</span>'
-            : '<span class="sk-badge">Away</span>'}
-        </div>`).join('');
-
-      const gtBadge = m.game_type
-        ? `<span class="game-type-badge">${m.game_type}</span>`
-        : '';
-
-      return `
-        <div class="match-card">
-          <div class="match-teams">
-            <div class="team-block home">
-              <span class="team-role">Home</span>
-              <span class="team-label">${m.home}</span>
-            </div>
-            <div style="text-align:center">
-              <span class="vs-divider">VS</span>
-              ${gtBadge}
-            </div>
-            <div class="team-block away">
-              <span class="team-role">Away</span>
-              <span class="team-label">${m.away}</span>
-            </div>
-          </div>
-          <div class="match-games">${gameRows}</div>
-        </div>`;
-    }).join('');
-
-    // Sidebar: team → all tables they play on this week
-    const teamTables = {};
-    for (const m of matchups) {
-      const tables = m.games.map(g => g.table);
-      for (const team of [m.home, m.away]) {
-        if (!teamTables[team]) teamTables[team] = [];
-        for (const t of tables) {
-          if (!teamTables[team].includes(t)) teamTables[team].push(t);
-        }
-      }
-    }
-    document.getElementById('sidebar-teams').innerHTML = Object.keys(teamTables).sort().map(name => `
-      <div class="sidebar-team">
-        <span class="sidebar-team-name">${name}</span>
-        <span class="sidebar-tables">${teamTables[name].sort((a, b) => a - b).join(' & ')}</span>
-      </div>`).join('');
-  }
-
-  current = currentWeek();
-  render();
-</script>
 </body>
 </html>
